@@ -27,7 +27,11 @@ import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
 import java.io.UnsupportedEncodingException;
 
+import java.sql.Date;
+import java.time.ZoneId;
+import java.util.Calendar;
 import java.util.List;
+import java.util.TimeZone;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
@@ -64,8 +68,16 @@ public class MemberService {
 
     public Response<List<MemberDTO>> getAllMembers() {
         logger.info("{}", GET_MEMBER);
-        List<MemberDTO> memberDTOList = memberRepository.findALlMember(fcode.backend.management.service.constant.Status.ACTIVE.toString()).stream()
-                .map(member -> modelMapper.map(member, MemberDTO.class)).collect(Collectors.toList());
+        List<MemberDTO> memberDTOList = memberRepository.findALlMember(Status.ACTIVE.toString()).stream()
+                .map(member -> {
+                    MemberDTO memberDTO = modelMapper.map(member, MemberDTO.class);
+                    Date date = member.getClubEntryDate();
+                    Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("Asia/Ho_Chi_Minh"));
+                    cal.setTime(date);
+                    int generationYear = cal.get(Calendar.YEAR) - 2004;
+                    memberDTO.setGenerationYear(generationYear);
+                    return memberDTO;
+                }).collect(Collectors.toList());
         logger.info("Get all members successfully");
         return new Response<>(HttpStatus.OK.value(), ServiceMessage.SUCCESS_MESSAGE.getMessage(), memberDTOList);
     }
@@ -82,6 +94,11 @@ public class MemberService {
         }
         Member member = memberRepository.findMemberById(id);
         MemberDTO memberDTO = modelMapper.map(member, MemberDTO.class);
+        Date date = member.getClubEntryDate();
+        Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("Asia/Ho_Chi_Minh"));
+        cal.setTime(date);
+        int generationYear = cal.get(Calendar.YEAR) - 2004;
+        memberDTO.setGenerationYear(generationYear);
         logger.info("Get member by id successfully");
         return new Response<>(HttpStatus.OK.value(), ServiceMessage.SUCCESS_MESSAGE.getMessage(), memberDTO);
     }
@@ -98,6 +115,11 @@ public class MemberService {
         }
         Member member = memberRepository.findMemberByStudentId(studentId, Status.ACTIVE.toString());
         MemberDTO memberDTO = modelMapper.map(member, MemberDTO.class);
+        Date date = member.getClubEntryDate();
+        Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("Asia/Ho_Chi_Minh"));
+        cal.setTime(date);
+        int generationYear = cal.get(Calendar.YEAR) - 2004;
+        memberDTO.setGenerationYear(generationYear);
         logger.info("Get member by student Id successfully");
         return new Response<>(HttpStatus.OK.value(), ServiceMessage.SUCCESS_MESSAGE.getMessage(), memberDTO);
     }
@@ -112,8 +134,16 @@ public class MemberService {
             logger.warn("{}{}", GET_MEMBER, ServiceMessage.ID_NOT_EXIST_MESSAGE);
             return new Response<>(HttpStatus.NOT_FOUND.value(), ServiceMessage.ID_NOT_EXIST_MESSAGE.getMessage());
         }
-        List<MemberDTO> memberDTOList = memberRepository.findMemberByLastname(lastname, Status.ACTIVE.toString()).stream()
-                .map(member -> modelMapper.map(member, MemberDTO.class)).collect(Collectors.toList());
+        List<MemberDTO> memberDTOList = memberRepository.findMemberByLastname(lastname, Status.ACTIVE.toString())
+                .stream().map(member -> {
+                    MemberDTO memberDTO = modelMapper.map(member, MemberDTO.class);
+                    Date date = member.getClubEntryDate();
+                    Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("Asia/Ho_Chi_Minh"));
+                    cal.setTime(date);
+                    int generationYear = cal.get(Calendar.YEAR) - 2004;
+                    memberDTO.setGenerationYear(generationYear);
+                    return memberDTO;
+                }).collect(Collectors.toList());
         logger.info("Get member by lastname successfully");
         return new Response<>(HttpStatus.OK.value(), ServiceMessage.SUCCESS_MESSAGE.getMessage(), memberDTOList);
     }
@@ -129,7 +159,15 @@ public class MemberService {
             return new Response<>(HttpStatus.NOT_FOUND.value(), ServiceMessage.ID_NOT_EXIST_MESSAGE.getMessage());
         }
         List<MemberDTO> memberDTOList = memberRepository.getMembersByPositionIdAndStatus(id, Status.ACTIVE.toString())
-                        .stream().map(member -> modelMapper.map(member, MemberDTO.class)).collect(Collectors.toList());
+                .stream().map(member -> {
+                    MemberDTO memberDTO = modelMapper.map(member, MemberDTO.class);
+                    Date date = member.getClubEntryDate();
+                    Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("Asia/Ho_Chi_Minh"));
+                    cal.setTime(date);
+                    int generationYear = cal.get(Calendar.YEAR) - 2004;
+                    memberDTO.setGenerationYear(generationYear);
+                    return memberDTO;
+                }).collect(Collectors.toList());
         logger.info("Get member by position Id successfully");
         return new Response<>(HttpStatus.OK.value(), ServiceMessage.SUCCESS_MESSAGE.getMessage(), memberDTOList);
     }

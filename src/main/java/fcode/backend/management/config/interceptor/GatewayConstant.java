@@ -133,5 +133,8 @@ public class GatewayConstant {
         apiEntities.add(new ApiEntity("Fee Post api", "/fee/**", POST_METHOD, Role.MANAGER));
         apiEntities.add(new ApiEntity("Fee Put api", "/fee/**", PUT_METHOD, Role.MANAGER));
         apiEntities.add(new ApiEntity("Fee Delete api", "/fee/**", DELETE_METHOD, Role.MANAGER));
+
+        apiEntities.add(new ApiEntity("Get Member Card By CardHashCode", "/card/**", GET_METHOD, Role.ADMIN));
+        apiEntities.add(new ApiEntity("Create Member Card", "/card/**", POST_METHOD, Role.ADMIN));
     }
 }
