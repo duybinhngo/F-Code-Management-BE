@@ -23,6 +23,7 @@ public class MemberDTO {
     private Date dateOfBirth;
     private Role role;
     private Date clubEntryDate;
+    private Integer generationYear;
     private String phone;
     private String personalMail;
     private String schoolMail;

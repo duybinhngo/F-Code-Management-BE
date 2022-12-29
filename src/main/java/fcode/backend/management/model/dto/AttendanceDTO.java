@@ -16,6 +16,7 @@ public class AttendanceDTO {
     private Integer id;
     private Integer memberId;
     private String studentId;
+    private String firstName;
     private String lastName;
     private Integer eventId;
     private String eventName;

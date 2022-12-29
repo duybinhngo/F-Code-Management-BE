@@ -45,10 +45,9 @@ public class AttendanceService {
         List<AttendanceDTO> attendanceDTOList = attendanceRepository.findAllAttendances().stream()
                 .map(attendance -> {
                     AttendanceDTO attendanceDTO = modelMapper.map(attendance, AttendanceDTO.class);
-                    attendanceDTO.setMemberId(attendance.getMember().getId());
                     attendanceDTO.setStudentId(attendance.getMember().getStudentId());
+                    attendanceDTO.setFirstName(attendance.getMember().getFirstName());
                     attendanceDTO.setLastName(attendance.getMember().getLastName());
-                    attendanceDTO.setEventId(attendance.getEvent().getId());
                     return attendanceDTO;
                 }).collect(Collectors.toList());
 
@@ -70,6 +69,7 @@ public class AttendanceService {
                 .stream().map(attendance -> {
                     AttendanceDTO attendanceDTO = modelMapper.map(attendance, AttendanceDTO.class);
                     attendanceDTO.setStudentId(attendance.getMember().getStudentId());
+                    attendanceDTO.setFirstName(attendance.getMember().getFirstName());
                     attendanceDTO.setLastName(attendance.getMember().getLastName());
                     return attendanceDTO;
                 }).collect(Collectors.toList());
@@ -90,6 +90,7 @@ public class AttendanceService {
                 .stream().map(attendance -> {
                     AttendanceDTO attendanceDTO = modelMapper.map(attendance, AttendanceDTO.class);
                     attendanceDTO.setStudentId(attendance.getMember().getStudentId());
+                    attendanceDTO.setFirstName(attendance.getMember().getFirstName());
                     attendanceDTO.setLastName(attendance.getMember().getLastName());
                     return attendanceDTO;
                 }).collect(Collectors.toList());
@@ -111,6 +112,7 @@ public class AttendanceService {
                 .stream().map(attendance -> {
                     AttendanceDTO attendanceDTO = modelMapper.map(attendance, AttendanceDTO.class);
                     attendanceDTO.setStudentId(attendance.getMember().getStudentId());
+                    attendanceDTO.setFirstName(attendance.getMember().getFirstName());
                     attendanceDTO.setLastName(attendance.getMember().getLastName());
                     return attendanceDTO;
                 }).collect(Collectors.toList());
