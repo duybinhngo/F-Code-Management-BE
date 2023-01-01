@@ -27,9 +27,9 @@ import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
 import java.io.UnsupportedEncodingException;
 
-import java.sql.Date;
-import java.time.ZoneId;
+
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.TimeZone;
 import java.util.regex.Pattern;
@@ -368,7 +368,7 @@ public class MemberService {
         if(member == null) {
             return new Response<>(HttpStatus.NOT_FOUND.value(), ServiceMessage.INVALID_ARGUMENT_MESSAGE.getMessage());
         } else {
-            if(!member.getPersonalMail().equals(newMail)) {
+            if(member.getPersonalMail() != (newMail)) {
                 member.setPersonalMail(newMail);
                 memberRepository.save(member);
                 return new Response<>(HttpStatus.OK.value(), ServiceMessage.SUCCESS_MESSAGE.getMessage());
@@ -380,7 +380,7 @@ public class MemberService {
         if(member == null) {
             return new Response<>(HttpStatus.NOT_FOUND.value(), ServiceMessage.INVALID_ARGUMENT_MESSAGE.getMessage());
         } else {
-            if(!member.getSchoolMail().equals(newMail)) {
+            if(member.getSchoolMail() != (newMail)) {
                 member.setSchoolMail(newMail);
                 memberRepository.save(member);
                 return new Response<>(HttpStatus.OK.value(), ServiceMessage.SUCCESS_MESSAGE.getMessage());
