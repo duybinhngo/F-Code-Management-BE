@@ -3,6 +3,7 @@ package fcode.backend.management.service;
 import fcode.backend.management.config.Role;
 import fcode.backend.management.model.dto.ArticleDTO;
 import fcode.backend.management.model.response.Response;
+import fcode.backend.management.repository.AnnouncementRepository;
 import fcode.backend.management.repository.ArticleRepository;
 import fcode.backend.management.repository.MemberRepository;
 import fcode.backend.management.repository.entity.Article;
@@ -21,7 +22,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
-import java.util.Set;
+import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
@@ -43,6 +44,8 @@ public class ArticleService {
     private static final String DELETE_ARTICLE_MESSAGE = "Delete article: ";
     private static final String APPROVE_ARTICLE = "Approve article: ";
     private static final String DISAPPROVE_ARTICLE = "Disapprove article: ";
+    @Autowired
+    private AnnouncementRepository announcementRepository;
 
     public Response<Void> createArticle(ArticleDTO articleDTO, String authorEmail) {
         logger.info("{}{}", CREATE_ARTICLE_MESSAGE, articleDTO);
@@ -94,7 +97,7 @@ public class ArticleService {
     @Transactional
     public Response<Void> approveAll() {
         logger.info("Approve all Article");
-        Set<Article> articleSet = articleRepository.findArticleByStatus(Status.PROCESSING);
+        List<Article> articleSet = articleRepository.findArticleByStatus(Status.PROCESSING);
         articleSet.forEach(article -> {
             article.setStatus(Status.ACTIVE);
             articleRepository.save(article);
@@ -106,7 +109,7 @@ public class ArticleService {
     @Transactional
     public Response<Void> disapproveAll() {
         logger.info("Disapprove all Article");
-        Set<Article> articleSet = articleRepository.findArticleByStatus(Status.PROCESSING);
+        List<Article> articleSet = articleRepository.findArticleByStatus(Status.PROCESSING);
         articleSet.forEach(article -> {
             article.setStatus(Status.INACTIVE);
             articleRepository.save(article);
@@ -129,9 +132,9 @@ public class ArticleService {
     }
 
     @Transactional
-    public Response<Set<ArticleDTO>> getAllArticles() {
+    public Response<List<ArticleDTO>> getAllArticles() {
         logger.info("{}{}", GET_ARTICLE_MESSAGE, "All article");
-        Set<ArticleDTO> articleDTOSet = articleRepository.findArticleByStatus(Status.ACTIVE).stream().map(map -> modelMapper.map(map, ArticleDTO.class)).collect(Collectors.toSet());
+        List<ArticleDTO> articleDTOSet = articleRepository.findArticleByStatus(Status.ACTIVE).stream().map(map -> modelMapper.map(map, ArticleDTO.class)).collect(Collectors.toList());
         logger.info("Get all articles successfully");
         return new Response<>(HttpStatus.OK.value(), ServiceMessage.SUCCESS_MESSAGE.getMessage(), articleDTOSet);
     }
@@ -153,35 +156,48 @@ public class ArticleService {
     }
 
     @Transactional
-    public Response<Set<ArticleDTO>> getProcessingArticles() {
+    public Response<List<ArticleDTO>> getProcessingArticles() {
         logger.info("{}{}", GET_ARTICLE_MESSAGE, "All processing articles");
-        Set<ArticleDTO> articleDTOSet = articleRepository.findArticleByStatus(Status.PROCESSING).stream().map(map -> modelMapper.map(map, ArticleDTO.class)).collect(Collectors.toSet());
+        List<ArticleDTO> articleDTOSet = articleRepository.findArticleByStatus(Status.PROCESSING).stream().map(map -> modelMapper.map(map, ArticleDTO.class)).collect(Collectors.toList());
         logger.info("Get all processing articles successfully");
         return new Response<>(HttpStatus.OK.value(), ServiceMessage.SUCCESS_MESSAGE.getMessage(), articleDTOSet);
     }
 
     @Transactional
-    public Response<Set<ArticleDTO>> getInactiveArticles() {
+    public Response<List<ArticleDTO>> getInactiveArticles() {
         logger.info("{}{}", GET_ARTICLE_MESSAGE, "All processing articles");
-        Set<ArticleDTO> articleDTOSet = articleRepository.findArticleByStatus(Status.INACTIVE).stream().map(map -> modelMapper.map(map, ArticleDTO.class)).collect(Collectors.toSet());
+        List<ArticleDTO> articleDTOSet = articleRepository.findArticleByStatus(Status.INACTIVE).stream().map(map -> modelMapper.map(map, ArticleDTO.class)).collect(Collectors.toList());
         logger.info("Get all processing articles successfully");
         return new Response<>(HttpStatus.OK.value(), ServiceMessage.SUCCESS_MESSAGE.getMessage(), articleDTOSet);
     }
     @Transactional
-    public Response<Set<ArticleDTO>> getArticlesByAuthor(Integer userId) {
+    public Response<List<ArticleDTO>> getArticlesOfUser(Integer userId) {
         logger.info("{}{}", GET_ARTICLE_MESSAGE, userId);
         if (userId == null) {
             logger.warn("{}{}", GET_ARTICLE_MESSAGE, ServiceMessage.INVALID_ARGUMENT_MESSAGE);
             return new Response<>(HttpStatus.BAD_REQUEST.value(), ServiceMessage.INVALID_ARGUMENT_MESSAGE.getMessage());
         }
-        Set<Article> articles = articleRepository.findArticleByMemberIdAndStatus(userId, Status.ACTIVE);
+        List<Article> articles = articleRepository.findArticleByMemberIdAndStatus(userId, Status.ACTIVE);
         if (articles.isEmpty()) {
             logger.warn("{}{}", GET_ARTICLE_MESSAGE, ServiceMessage.ID_NOT_EXIST_MESSAGE);
             return new Response<>(HttpStatus.NOT_FOUND.value(), ServiceMessage.ID_NOT_EXIST_MESSAGE.getMessage());
         }
-        Set<ArticleDTO> articleDTOSet = articles.stream().map(article -> modelMapper.map(article, ArticleDTO.class)).collect(Collectors.toSet());
-        logger.info("Get article by author successfully");
+        List<ArticleDTO> articleDTOSet = articles.stream().map(article -> modelMapper.map(article, ArticleDTO.class)).collect(Collectors.toList());
+        logger.info("Get articles of user successfully");
         return new Response<>(HttpStatus.OK.value(), ServiceMessage.SUCCESS_MESSAGE.getMessage(), articleDTOSet);
+    }
+
+    @Transactional
+    public Response<List<ArticleDTO>> getArticlesByAuthor(String author) {
+        logger.info("{}", GET_ARTICLE_MESSAGE);
+        logger.info("Author: {}", author);
+        if (author == null || author.isEmpty()) {
+            logger.warn("{}{}", GET_ARTICLE_MESSAGE, ServiceMessage.INVALID_ARGUMENT_MESSAGE);
+            return new Response<>(HttpStatus.BAD_REQUEST.value(), ServiceMessage.INVALID_ARGUMENT_MESSAGE.getMessage());
+        }
+        List<ArticleDTO> articleDTOS = articleRepository.findArticleByAuthorAndStatus(author, Status.ACTIVE).stream().map(article -> modelMapper.map(article, ArticleDTO.class)).collect(Collectors.toList());
+        logger.info("Get articles of author {} successfully", author);
+        return new Response<>(HttpStatus.OK.value(), ServiceMessage.SUCCESS_MESSAGE.getMessage(), articleDTOS);
     }
     public Response<Void> updateArticle(ArticleDTO articleDTO, Integer userId) {
         logger.info("{}{} by user id: {}", UPDATE_ARTICLE_MESSAGE, articleDTO, userId);

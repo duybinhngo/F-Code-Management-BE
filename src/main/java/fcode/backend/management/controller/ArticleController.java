@@ -6,7 +6,7 @@ import fcode.backend.management.service.ArticleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Set;
+import java.util.List;
 
 @RestController
 @RequestMapping("/article")
@@ -25,23 +25,28 @@ public class ArticleController {
     }
 
     @GetMapping("/processing")
-    Response<Set<ArticleDTO>> getProcessingArticle() {
+    Response<List<ArticleDTO>> getProcessingArticle() {
         return articleService.getProcessingArticles();
     }
 
     @GetMapping("/all")
-    Response<Set<ArticleDTO>> getAllArticle() {
+    Response<List<ArticleDTO>> getAllArticle() {
         return articleService.getAllArticles();
     }
 
     @GetMapping("/inactive")
-    Response<Set<ArticleDTO>> getInactiveArticle() {
+    Response<List<ArticleDTO>> getInactiveArticle() {
         return articleService.getInactiveArticles();
     }
-    @GetMapping("/author")
-    Response<Set<ArticleDTO>> getArticlesByAuthor(@RequestAttribute(required = false) Integer userId) {
-        return articleService.getArticlesByAuthor(userId);
+    @GetMapping("/user")
+    Response<List<ArticleDTO>> getArticlesOfUser(@RequestAttribute(required = false) Integer userId) {
+        return articleService.getArticlesOfUser(userId);
     }
+    @GetMapping("/author")
+    Response<List<ArticleDTO>> getArticlesByAuthor(@RequestParam String author) {
+        return articleService.getArticlesByAuthor(author);
+    }
+
     @PutMapping("/approve/{id}")
     Response<Void> approveArticle(@PathVariable Integer id) {
         return articleService.approveArticle(id);
