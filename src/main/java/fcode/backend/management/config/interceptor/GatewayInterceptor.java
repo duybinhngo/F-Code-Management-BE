@@ -19,6 +19,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.Enumeration;
 
 @Service
 public class GatewayInterceptor implements HandlerInterceptor {
@@ -81,14 +82,19 @@ public class GatewayInterceptor implements HandlerInterceptor {
         LoginUserDTO loginUserDTO = memberRepository.getLoginUserByEmail(userEmail);
         logger.info("Ending-GetLoginUserByEmail");
         logger.info("Request Remote Address:{}",request.getRemoteAddr());
+        Enumeration<String> headerNames = request.getHeaderNames();
+        while(headerNames.hasMoreElements()) {
+            String headerName = headerNames.nextElement();
+            logger.info("Header Name - {}, Value - {}", headerName, request.getHeader(headerName));
+        }
         logger.info("User IP Address:{}",loginUserDTO.getIp());
         if(loginUserDTO == null)
         {
             logger.warn("{}{}","Login member is not exist",userEmail);
             throw new ServiceException(HttpStatus.UNAUTHORIZED,"Please register and contact to F-Code club to be accepted");
         }
-        if (!request.getRemoteAddr().equals(loginUserDTO.getIp()))
-            throw new AccountLoggedInException();
+//        if (!request.getRemoteAddr().equals(loginUserDTO.getIp()))
+//            throw new AccountLoggedInException();
         logger.info("Path:{} VerifyDTO:{}", servletPath, loginUserDTO);
         if (loginUserDTO.getRole().ordinal() >= apiEntity.getRole().ordinal())
         {

@@ -23,15 +23,18 @@ public class AuthController {
     AuthService authService;
     @Value("${auth.login.member}")
     private String loginByMemberUrl;
+    @Value("${auth.login.member.card}")
+    private String loginByMemberUrlCard;
     @Value("${auth.login.member.dev}")
     private String loginByMemberUrlDev;
     @Value("${auth.login.student}")
     private String loginByStudentUrl;
     @Value("${auth.register}")
     private String registerUrl;
-    @Value("${auth.redirect.url}")
-    private String authRedirectUrl;
-    private static final Logger logger = LogManager.getLogger(AuthController.class);
+    @Value("${card.auth.redirect.url}")
+    private String cardAuthRedirectUrl;
+    @Value("${manage.auth.redirect.url}")
+    private String manageAuthRedirectUrl;
 
     @GetMapping("/login/student")
     public RedirectView loginByStudentRedirect() throws IOException {
@@ -73,13 +76,28 @@ public class AuthController {
         redirectView.setUrl(loginByMemberUrl);
         return redirectView;
     }
+    @GetMapping("/login/member/card")
+    public RedirectView loginByMemberRedirectCard(HttpServletResponse response) throws IOException {
+        RedirectView redirectView = new RedirectView();
+        redirectView.setUrl(loginByMemberUrlCard);
+        return redirectView;
+    }
     @GetMapping("/auth/member")
-    public RedirectView loginByMember(@RequestParam String code, HttpServletRequest request, HttpServletResponse response) throws IOException {
+    public RedirectView loginByMemberManage(@RequestParam String code, HttpServletRequest request, HttpServletResponse response) throws IOException {
         Response<String> result = authService.loginByMember(code, request.getRemoteAddr(), request.getRequestURL().toString());
         RedirectView redirectView = new RedirectView();
         if(result.getCode() == HttpStatus.OK.value())
-            redirectView.setUrl(authRedirectUrl + "?success=true&token=" + result.getData());
-        else redirectView.setUrl(authRedirectUrl + "?success=false&message=" + result.getData());
+            redirectView.setUrl(manageAuthRedirectUrl + "?success=true&token=" + result.getData());
+        else redirectView.setUrl(manageAuthRedirectUrl + "?success=false&message=" + result.getData());
+        return redirectView;
+    }
+    @GetMapping("/auth/member/card")
+    public RedirectView loginByMemberCard(@RequestParam String code, HttpServletRequest request, HttpServletResponse response) throws IOException {
+        Response<String> result = authService.loginByMember(code, request.getRemoteAddr(), request.getRequestURL().toString());
+        RedirectView redirectView = new RedirectView();
+        if(result.getCode() == HttpStatus.OK.value())
+            redirectView.setUrl(cardAuthRedirectUrl + "?success=true&token=" + result.getData());
+        else redirectView.setUrl(cardAuthRedirectUrl + "?success=false&message=" + result.getData());
         return redirectView;
     }
 }
