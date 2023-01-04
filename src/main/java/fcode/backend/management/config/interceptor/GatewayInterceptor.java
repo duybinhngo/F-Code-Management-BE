@@ -82,11 +82,6 @@ public class GatewayInterceptor implements HandlerInterceptor {
         LoginUserDTO loginUserDTO = memberRepository.getLoginUserByEmail(userEmail);
         logger.info("Ending-GetLoginUserByEmail");
         logger.info("Request Remote Address:{}",request.getRemoteAddr());
-        Enumeration<String> headerNames = request.getHeaderNames();
-        while(headerNames.hasMoreElements()) {
-            String headerName = headerNames.nextElement();
-            logger.info("Header Name - {}, Value - {}", headerName, request.getHeader(headerName));
-        }
         logger.info("User IP Address:{}",loginUserDTO.getIp());
         if(loginUserDTO == null)
         {
