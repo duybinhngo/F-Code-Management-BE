@@ -19,6 +19,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.Enumeration;
 
 @Service
 public class GatewayInterceptor implements HandlerInterceptor {
@@ -87,8 +88,8 @@ public class GatewayInterceptor implements HandlerInterceptor {
             logger.warn("{}{}","Login member is not exist",userEmail);
             throw new ServiceException(HttpStatus.UNAUTHORIZED,"Please register and contact to F-Code club to be accepted");
         }
-        if (!request.getRemoteAddr().equals(loginUserDTO.getIp()))
-            throw new AccountLoggedInException();
+//        if (!request.getRemoteAddr().equals(loginUserDTO.getIp()))
+//            throw new AccountLoggedInException();
         logger.info("Path:{} VerifyDTO:{}", servletPath, loginUserDTO);
         if (loginUserDTO.getRole().ordinal() >= apiEntity.getRole().ordinal())
         {
