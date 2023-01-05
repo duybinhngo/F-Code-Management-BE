@@ -15,8 +15,8 @@ public class ArticleController {
     ArticleService articleService;
 
     @PostMapping
-    Response<Void> createArticle(@RequestBody ArticleDTO articleDTO, @RequestAttribute(required = false) String userEmail) {
-        return articleService.createArticle(articleDTO, userEmail);
+    Response<Void> createArticle(@RequestBody ArticleDTO articleDTO, @RequestAttribute(required = false) Integer userId) {
+        return articleService.createArticle(articleDTO, userId);
     }
 
     @GetMapping("/{id}")
@@ -42,9 +42,9 @@ public class ArticleController {
     Response<List<ArticleDTO>> getArticlesOfUser(@RequestAttribute(required = false) Integer userId) {
         return articleService.getArticlesOfUser(userId);
     }
-    @GetMapping("/author")
-    Response<List<ArticleDTO>> getArticlesByAuthor(@RequestParam String author) {
-        return articleService.getArticlesByAuthor(author);
+    @GetMapping("/author/{userId}")
+    Response<List<ArticleDTO>> getArticlesByAuthor(@PathVariable Integer userId) {
+        return articleService.getArticlesByAuthor(userId);
     }
 
     @PutMapping("/approve/{id}")
