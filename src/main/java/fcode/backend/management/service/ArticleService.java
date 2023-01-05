@@ -47,21 +47,17 @@ public class ArticleService {
     @Autowired
     private AnnouncementRepository announcementRepository;
 
-    public Response<Void> createArticle(ArticleDTO articleDTO, String authorEmail) {
+    public Response<Void> createArticle(ArticleDTO articleDTO, Integer memberId) {
         logger.info("{}{}", CREATE_ARTICLE_MESSAGE, articleDTO);
         if (articleDTO == null) {
             logger.warn("{}{}", CREATE_ARTICLE_MESSAGE, ServiceMessage.INVALID_ARGUMENT_MESSAGE);
             return new Response<>(HttpStatus.BAD_REQUEST.value(), ServiceMessage.INVALID_ARGUMENT_MESSAGE.getMessage());
         }
-        if (authorEmail == null) {
-            logger.warn("{}{}", CREATE_ARTICLE_MESSAGE, HttpStatus.UNAUTHORIZED.name());
-            return new Response<>(HttpStatus.UNAUTHORIZED.value(), HttpStatus.UNAUTHORIZED.name());
-        }
-        if (articleDTO.getMemberId() == null || articleDTO.getGenreId() == null || articleDTO.getTitle() == null) {
+        if (articleDTO.getGenreId() == null || articleDTO.getTitle() == null) {
             logger.warn("{}{}", CREATE_ARTICLE_MESSAGE, ServiceMessage.INVALID_ARGUMENT_MESSAGE);
             return new Response<>(HttpStatus.BAD_REQUEST.value(), ServiceMessage.INVALID_ARGUMENT_MESSAGE.getMessage());
         }
-        Member member = memberRepository.findMemberById(articleDTO.getMemberId());
+        Member member = memberRepository.findMemberById(memberId);
         if (member == null) {
             logger.warn("{}{}", CREATE_ARTICLE_MESSAGE, ServiceMessage.INVALID_ARGUMENT_MESSAGE);
             return new Response<>(HttpStatus.BAD_REQUEST.value(), ServiceMessage.INVALID_ARGUMENT_MESSAGE.getMessage());
@@ -73,7 +69,7 @@ public class ArticleService {
         }
         Article article = modelMapper.map(articleDTO, Article.class);
         article.setId(null);
-        article.setAuthor(authorEmail);
+        article.setMember(member);
         article.setStatus(Status.PROCESSING);
         logger.info("{}{}", CREATE_ARTICLE_MESSAGE, article);
         articleRepository.save(article);
@@ -188,17 +184,18 @@ public class ArticleService {
     }
 
     @Transactional
-    public Response<List<ArticleDTO>> getArticlesByAuthor(String author) {
+    public Response<List<ArticleDTO>> getArticlesByAuthor(Integer userId) {
         logger.info("{}", GET_ARTICLE_MESSAGE);
-        logger.info("Author: {}", author);
-        if (author == null || author.isEmpty()) {
+        logger.info("Author: {}", userId);
+        if (userId == null) {
             logger.warn("{}{}", GET_ARTICLE_MESSAGE, ServiceMessage.INVALID_ARGUMENT_MESSAGE);
             return new Response<>(HttpStatus.BAD_REQUEST.value(), ServiceMessage.INVALID_ARGUMENT_MESSAGE.getMessage());
         }
-        List<ArticleDTO> articleDTOS = articleRepository.findArticleByAuthorAndStatus(author, Status.ACTIVE).stream().map(article -> modelMapper.map(article, ArticleDTO.class)).collect(Collectors.toList());
-        logger.info("Get articles of author {} successfully", author);
+        List<ArticleDTO> articleDTOS = articleRepository.findArticleByMemberIdAndStatus(userId, Status.ACTIVE).stream().map(article -> modelMapper.map(article, ArticleDTO.class)).collect(Collectors.toList());
+        logger.info("Get articles of author {} successfully", userId);
         return new Response<>(HttpStatus.OK.value(), ServiceMessage.SUCCESS_MESSAGE.getMessage(), articleDTOS);
     }
+
     public Response<Void> updateArticle(ArticleDTO articleDTO, Integer userId) {
         logger.info("{}{} by user id: {}", UPDATE_ARTICLE_MESSAGE, articleDTO, userId);
         if (articleDTO == null) {

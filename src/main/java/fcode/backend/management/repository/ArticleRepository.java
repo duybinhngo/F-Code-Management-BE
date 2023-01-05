@@ -13,5 +13,4 @@ public interface ArticleRepository extends JpaRepository<Article, Integer> {
     List<Article> findArticleByStatus(Status status);
     Article findArticleByIdAndStatusIsNot(Integer id, Status status);
     List<Article> findArticleByMemberIdAndStatus(Integer memberId, Status status);
-    List<Article> findArticleByAuthorAndStatus(String author, Status status);
 }
