@@ -1,6 +1,7 @@
 package fcode.backend.management.controller;
 
 import fcode.backend.management.model.dto.ArticleDTO;
+import fcode.backend.management.model.dto.GenreDTO;
 import fcode.backend.management.model.response.Response;
 import fcode.backend.management.service.ArticleService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,12 +14,19 @@ import java.util.List;
 public class ArticleController {
     @Autowired
     ArticleService articleService;
-
     @PostMapping
     Response<Void> createArticle(@RequestBody ArticleDTO articleDTO, @RequestAttribute(required = false) Integer userId) {
         return articleService.createArticle(articleDTO, userId);
     }
 
+    @GetMapping("/genre/{id}")
+    Response<GenreDTO> getGenreById(@PathVariable Integer id) {
+        return articleService.getGenreById(id);
+    }
+    @GetMapping("genre/all")
+    Response<List<GenreDTO>> getAllGenres() {
+        return articleService.getALLGenres();
+    }
     @GetMapping("/{id}")
     Response<ArticleDTO> getArticleById(@PathVariable Integer id) {
         return articleService.getArticleById(id);
