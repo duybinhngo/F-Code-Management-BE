@@ -2,6 +2,7 @@ package fcode.backend.management.service;
 
 import fcode.backend.management.config.Role;
 import fcode.backend.management.model.dto.ArticleDTO;
+import fcode.backend.management.model.dto.GenreDTO;
 import fcode.backend.management.model.response.Response;
 import fcode.backend.management.repository.AnnouncementRepository;
 import fcode.backend.management.repository.ArticleRepository;
@@ -39,6 +40,7 @@ public class ArticleService {
 
     private static final Logger logger = LogManager.getLogger(ArticleService.class);
     private static final String CREATE_ARTICLE_MESSAGE = "Create article: ";
+    private static final String GET_GENRE_MESSAGE = "Get genre: ";
     private static final String UPDATE_ARTICLE_MESSAGE = "Update article: ";
     private static final String GET_ARTICLE_MESSAGE = "Get article: ";
     private static final String DELETE_ARTICLE_MESSAGE = "Delete article: ";
@@ -126,7 +128,28 @@ public class ArticleService {
         logger.info("Disapprove article successfully");
         return new Response<>(HttpStatus.OK.value(), ServiceMessage.SUCCESS_MESSAGE.getMessage());
     }
-
+    public Response<GenreDTO> getGenreById(Integer id) {
+        logger.info("{}{}", GET_GENRE_MESSAGE, id);
+        if (id == null) {
+            logger.warn("{}{}", GET_GENRE_MESSAGE, ServiceMessage.INVALID_ARGUMENT_MESSAGE);
+            return new Response<>(HttpStatus.BAD_REQUEST.value(), ServiceMessage.INVALID_ARGUMENT_MESSAGE.getMessage());
+        }
+        Genre genre = genreRepository.findGenreById(id);
+        if (genre == null) {
+            logger.warn("{}{}", GET_GENRE_MESSAGE, ServiceMessage.ID_NOT_EXIST_MESSAGE);
+            return new Response<>(HttpStatus.NOT_FOUND.value(), ServiceMessage.ID_NOT_EXIST_MESSAGE.getMessage());
+        }
+        logger.info("Get genre successfully");
+        GenreDTO genreDTO = modelMapper.map(genre, GenreDTO.class);
+        return new Response<>(HttpStatus.OK.value(), ServiceMessage.SUCCESS_MESSAGE.getMessage(), genreDTO);
+    }
+    @Transactional
+    public Response<List<GenreDTO>> getALLGenres() {
+        logger.info("{}{}", GET_GENRE_MESSAGE, "All genres");
+        List<GenreDTO> genreDTOS = genreRepository.findAll().stream().map(map -> modelMapper.map(map, GenreDTO.class)).collect(Collectors.toList());
+        logger.info("Get all genres successfully");
+        return new Response<>(HttpStatus.OK.value(), ServiceMessage.SUCCESS_MESSAGE.getMessage(), genreDTOS);
+    }
     @Transactional
     public Response<List<ArticleDTO>> getAllArticles() {
         logger.info("{}{}", GET_ARTICLE_MESSAGE, "All article");
