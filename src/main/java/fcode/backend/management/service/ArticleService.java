@@ -175,6 +175,22 @@ public class ArticleService {
     }
 
     @Transactional
+    public Response<List<ArticleDTO>> getArticlesByGenreId(Integer genreId) {
+        logger.info("{}genre id: {}", GET_ARTICLE_MESSAGE, genreId);
+        if (genreId == null) {
+            logger.warn("{}{}", GET_ARTICLE_MESSAGE, ServiceMessage.INVALID_ARGUMENT_MESSAGE);
+            return new Response<>(HttpStatus.BAD_REQUEST.value(), ServiceMessage.INVALID_ARGUMENT_MESSAGE.getMessage());
+        }
+        Genre genre = genreRepository.findGenreById(genreId);
+        if (genre == null) {
+            logger.warn("{}{}", GET_ARTICLE_MESSAGE, ServiceMessage.ID_NOT_EXIST_MESSAGE);
+            return new Response<>(HttpStatus.NOT_FOUND.value(), ServiceMessage.ID_NOT_EXIST_MESSAGE.getMessage());
+        }
+        List<ArticleDTO> articleDTOS = genre.getArticles().stream().filter(article -> article.getStatus().equals(Status.ACTIVE)).map(article -> modelMapper.map(article, ArticleDTO.class)).collect(Collectors.toList());
+        logger.info("Get articles by genre id successfully.");
+        return new Response<>(HttpStatus.OK.value(), ServiceMessage.SUCCESS_MESSAGE.getMessage(), articleDTOS);
+    }
+    @Transactional
     public Response<List<ArticleDTO>> getProcessingArticles() {
         logger.info("{}{}", GET_ARTICLE_MESSAGE, "All processing articles");
         List<ArticleDTO> articleDTOSet = articleRepository.findArticleByStatus(Status.PROCESSING).stream().map(map -> modelMapper.map(map, ArticleDTO.class)).collect(Collectors.toList());
