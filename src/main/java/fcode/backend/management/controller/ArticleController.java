@@ -27,6 +27,10 @@ public class ArticleController {
     Response<List<GenreDTO>> getAllGenres() {
         return articleService.getALLGenres();
     }
+    @GetMapping("genre")
+    Response<List<ArticleDTO>> getArticlesByGenreId(@RequestParam Integer genreId) {
+        return articleService.getArticlesByGenreId(genreId);
+    }
     @GetMapping("/{id}")
     Response<ArticleDTO> getArticleById(@PathVariable Integer id) {
         return articleService.getArticleById(id);
