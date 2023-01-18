@@ -97,8 +97,7 @@ public class GatewayConstant {
 
         apiEntities.add(new ApiEntity("Article Get all article api", "/article/all", GET_METHOD, null));
         apiEntities.add(new ApiEntity("Article Get article by id api", "/article/{id:\\d+}", GET_METHOD, null));
-        apiEntities.add(new ApiEntity("Article Get all genre api", "/article/genre/all", GET_METHOD, null));
-        apiEntities.add(new ApiEntity("Article Get genre by id api", "/article/genre/{id:\\d+}", GET_METHOD, null));
+        apiEntities.add(new ApiEntity("Article/genre get api", "/article/genre/**", GET_METHOD, null));
         apiEntities.add(new ApiEntity("Article Get article by author api", "/article/author/**", GET_METHOD, Role.MEMBER));
         apiEntities.add(new ApiEntity("Article Get article of user api", "/article/user/**", GET_METHOD, Role.MEMBER));
         apiEntities.add(new ApiEntity("Article Get processing articles", "/article/processing", GET_METHOD, Role.MANAGER));

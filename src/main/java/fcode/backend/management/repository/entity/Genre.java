@@ -5,7 +5,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
-import java.util.Set;
+import java.util.List;
 
 @Entity
 @Table(name = "genre")
@@ -20,5 +20,5 @@ public class Genre {
     @Column
     private String name;
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "genre")
-    private Set<Article> articles;
+    private List<Article> articles;
 }
