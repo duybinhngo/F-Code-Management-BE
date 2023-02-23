@@ -23,14 +23,17 @@ public class ArticleController {
     Response<GenreDTO> getGenreById(@PathVariable Integer id) {
         return articleService.getGenreById(id);
     }
-    @GetMapping("genre/all")
+
+    @GetMapping("/genre/all")
     Response<List<GenreDTO>> getAllGenres() {
-        return articleService.getALLGenres();
+        return articleService.getAllGenres();
     }
-    @GetMapping("genre")
+
+    @GetMapping("/genre")
     Response<List<ArticleDTO>> getArticlesByGenreId(@RequestParam Integer genreId) {
         return articleService.getArticlesByGenreId(genreId);
     }
+
     @GetMapping("/{id}")
     Response<ArticleDTO> getArticleById(@PathVariable Integer id) {
         return articleService.getArticleById(id);

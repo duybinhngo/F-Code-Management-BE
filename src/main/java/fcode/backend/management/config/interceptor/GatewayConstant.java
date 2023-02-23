@@ -37,6 +37,7 @@ public class GatewayConstant {
         apiEntities.add(new ApiEntity("Member Get api for member", "/member/verifySMail/*", GET_METHOD, null));
         apiEntities.add(new ApiEntity("Member Get api for member", "/member/verifyPMail/*", GET_METHOD, null));
         apiEntities.add(new ApiEntity("Own Member Get api for member", "/member/own", GET_METHOD, Role.MEMBER));
+        apiEntities.add(new ApiEntity("Member Get api for manager", "/member/memberId/**", GET_METHOD, Role.MEMBER));
         apiEntities.add(new ApiEntity("Member Get api for manager", "/member/**", GET_METHOD, Role.MANAGER));
         apiEntities.add(new ApiEntity("Member Put api for member", "/member/us", PUT_METHOD, Role.MEMBER));
         apiEntities.add(new ApiEntity("Member Put api for admin", "/member/ad", PUT_METHOD, Role.ADMIN));
@@ -87,8 +88,8 @@ public class GatewayConstant {
         apiEntities.add(new ApiEntity("Attendance Put api", "/attendance/**", PUT_METHOD, Role.MANAGER));
         apiEntities.add(new ApiEntity("Attendance Delete api", "/attendance/**", DELETE_METHOD, Role.MANAGER));
         
-        apiEntities.add(new ApiEntity("Get All Announcements", "/announcement/all", GET_METHOD, Role.MANAGER));
-        apiEntities.add(new ApiEntity("Get One Announcement", "/announcement/one/{announcementId:\\d+}", GET_METHOD, Role.MANAGER));
+        apiEntities.add(new ApiEntity("Get All Announcements", "/announcement/all", GET_METHOD, Role.MEMBER));
+        apiEntities.add(new ApiEntity("Get One Announcement", "/announcement/one/{announcementId:\\d+}", GET_METHOD, Role.MEMBER));
         apiEntities.add(new ApiEntity("Search Announcements By Title", "/announcement/search", GET_METHOD, Role.MANAGER));
         apiEntities.add(new ApiEntity("Create New Announcement", "/announcement", POST_METHOD, Role.MANAGER));
         apiEntities.add(new ApiEntity("Update One Announcement", "/announcement", PUT_METHOD, Role.MANAGER));
