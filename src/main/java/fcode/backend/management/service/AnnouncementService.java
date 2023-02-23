@@ -135,10 +135,15 @@ public class AnnouncementService {
         announcement.setMember(memberRepository.findMemberById(userId));
         announcement.setSendEmailWhenUpdate(false);
         Announcement announcementEntity = announcementRepository.save(announcement);
-        logger.info("{}{}", CREATE_ANNOUNCEMENT, "Create new announcement success");
+        logger.info("{}{}", CREATE_ANNOUNCEMENT, "Create new announcement success: ");
+        logger.info("{}{}", CREATE_ANNOUNCEMENT,  announcementEntity.toString());
+        logger.info("{}, {}, {}, {}", CREATE_ANNOUNCEMENT,  announcementEntity.getId(),
+                announcementEntity.getCreatedTime(), announcementEntity.getUpdatedTime());
 
         NotificationDTO notificationDTO = modelMapper.map(announcementEntity, NotificationDTO.class);
-        logger.info("{}{}", GET_NOTIFICATION_DTO, notificationDTO);
+        logger.info("{}{}", GET_NOTIFICATION_DTO, notificationDTO.toString());
+        logger.info("{}, {}, {}, {}", GET_NOTIFICATION_DTO,  notificationDTO.getId(),
+                notificationDTO.getCreatedTime(), notificationDTO.getUpdatedTime());
 
         logger.info("{}{}", CREATE_ANNOUNCEMENT, START_ADDING_NOTIFICATION_TO_MEMBER_ENTITY);
         notificationService.addNotificationToMember(announcementEntity, emailSet);

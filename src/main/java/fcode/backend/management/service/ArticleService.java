@@ -144,7 +144,7 @@ public class ArticleService {
         return new Response<>(HttpStatus.OK.value(), ServiceMessage.SUCCESS_MESSAGE.getMessage(), genreDTO);
     }
     @Transactional
-    public Response<List<GenreDTO>> getALLGenres() {
+    public Response<List<GenreDTO>> getAllGenres() {
         logger.info("{}{}", GET_GENRE_MESSAGE, "All genres");
         List<GenreDTO> genreDTOS = genreRepository.findAll().stream().map(map -> modelMapper.map(map, GenreDTO.class)).collect(Collectors.toList());
         logger.info("Get all genres successfully");

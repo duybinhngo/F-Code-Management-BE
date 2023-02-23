@@ -4,6 +4,7 @@ import fcode.backend.management.service.constant.Status;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
 
 import javax.persistence.*;
 import java.util.*;
@@ -12,6 +13,7 @@ import java.util.*;
 @Table(name = "announcement")
 @Getter
 @Setter
+@ToString
 @NoArgsConstructor
 public class Announcement {
     @Id
